@@ -77,22 +77,27 @@ rm(out.par)
 container <- do.call(rbind, container)
 container.sparse <- do.call(rbind, container.sparse)
 
-saveRDS(container, file = "../output/data/school_long.RDS")
-saveRDS(container.sparse, file = "../output/data/school_wide.RDS")
+saveRDS(container, file = "../../output/ccoha/data/ct_long.RDS")
+saveRDS(container.sparse, file = "../../output/ccoha/data/ct_wide.RDS")
 
-container.sparse <- readRDS("../output/data/school_wide.RDS")
+container.sparse <- readRDS("../output/data/ct_wide.RDS")
 container.sparse <- container.sparse %>% filter(!grepl("<nul>", s.plain))
-write.table(container.sparse$s.plain, file = "../output/data/school_sentences.txt", row.names = F, quote = F, col.names = F)
+write.table(container.sparse$s.plain, file = "../../output/ccoha/data/sentences_ct.txt", row.names = F, quote = F, col.names = F)
+
+stopCluster(cl)
+
 ggplot(container.sparse, aes(x = year)) +
   geom_histogram()
+
+table(grepl("conspiracy theory", container.sparse$s.plain))
 
 library(umap)
 library(plotly)
 library(factoextra)
 library(cluster)
 library(Rtsne)
-l <- read.table("../output/embeddings/embeddings_school.tsv", sep = "\t")
-meta <- readLines("../output/embeddings/metadata_school.tsv")
+l <- read.table("../output/embeddings/embeddings_ct.tsv", sep = "\t")
+meta <- readLines("../output/embeddings/metadata_ct.tsv")
 
 l$lemma <- meta
 eos_indices <- which(meta == "@@@") + 1
