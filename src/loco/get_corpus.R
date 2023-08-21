@@ -47,8 +47,9 @@ subsample <- sentences[!sentences$ct_dummy,]
 set.seed(46659)
 subsample <- subsample[sample(1:nrow(subsample), 20000),]
 subsample <- rbind(subsample, ct_sentences)
+subsample <- mutate(subsample, txt_lemma = tolower(txt_lemma))
 
 save(subsample, file = "../../output/loco/data/subsample_loco.RDS")
 
-write.table(subsample$lemma, file = "../../output/loco/data/sentences.txt", row.names = F, quote = F, col.names = F)
+write.table(subsample$txt_lemma, file = "../../output/loco/data/sentences.txt", row.names = F, quote = F, col.names = F)
 
