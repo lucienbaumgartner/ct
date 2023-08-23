@@ -18,7 +18,6 @@ df <- mutate(df, date = as.Date(date))
 head(df$date)
 df <- filter(df, !is.na(date))
 range(df$date)
-hist(df$date)
 
 ggplot(df, aes(x = date)) +
   geom_histogram()
@@ -40,12 +39,15 @@ sentences <- tibble(txt_lemma = unlist(sentences), id = sentence.ids)
 sentences <- cbind(sentences, df[sentence.ids,])
 sentences <- sentences %>% mutate(ct_dummy = grepl("conspiracy theory", txt_lemma))
 
+table(sentences$ct_dummy, sentences$subcorpus)
+
 set.seed(46659)
 ct_sentences <- filter(sentences, ct_dummy)
 ct_sentences <- ct_sentences[sample(1:nrow(ct_sentences), 5000),]
 subsample <- sentences[!sentences$ct_dummy,]
 set.seed(46659)
-subsample <- subsample[sample(1:nrow(subsample), 20000),]
+subsample <- subsample %>% group_by(subcorpus) %>% sample_n(10000)
+table(subsample$subcorpus)
 subsample <- rbind(subsample, ct_sentences)
 subsample <- mutate(subsample, txt_lemma = tolower(txt_lemma))
 
